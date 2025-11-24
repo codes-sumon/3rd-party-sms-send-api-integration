@@ -151,9 +151,7 @@ CREATE PROCEDURE prc_send_sms(
         p_result := APEX_WEB_SERVICE.MAKE_REST_REQUEST(
             p_url         => l_url,
             p_http_method => 'POST',
-            p_body        => l_request_body,
-            p_wallet_path => 'file:D:\OracleDB\OracleWallet',
-            p_wallet_pwd  => 'Apex#123'
+            p_body        => l_request_body
         );
     EXCEPTION
         WHEN OTHERS THEN
