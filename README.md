@@ -1,4 +1,4 @@
-# 3rd party sms send API integration
+# 3rd party sms send API integration with Oracle Database
 
 Calling external (HTTP/HTTPS) APIs from Oracle PL/SQL requires two main configurations:<br>
 **ACL (Access Control List)** – Security to allow OUTBOUND network access.<br>
