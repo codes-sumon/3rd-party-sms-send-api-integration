@@ -1,0 +1,49 @@
+
+DECLARE
+    l_acl_path    VARCHAR2(3000);
+BEGIN
+    SELECT acl
+    INTO l_acl_path
+    FROM dba_network_acls
+    WHERE host = '*'
+    AND lower_port IS NULL
+    AND upper_port IS NULL;
+
+    IF dbms_network_acl_admin.check_privilege(
+        acl                => l_acl_path
+        , user            => 'APEX_260100' -- Specify your apex_user
+        , privilege    => 'connect'
+    ) IS NULL THEN
+        dbms_network_acl_admin.add_privilege(
+            acl                => l_acl_path
+            , principal    => 'APEX_260100' -- Specify your apex_user
+            , is_grant      => TRUE
+            , privilege    => 'connect'
+        );
+    END IF;
+EXCEPTION
+    WHEN no_data_found THEN
+    dbms_network_acl_admin.create_acl(
+        acl                => 'SEND_MAIL.xml'
+        , description => 'Email integration with Oracle APEX and send mail'
+        , principal   => 'APEX_260100'
+        , is_grant    => true
+        , privilege    => 'connect'
+    );
+
+    dbms_network_acl_admin.assign_acl(
+        acl                => 'SEND_MAIL.xml'
+        , host            => '*'
+    );
+END;
+
+BEGIN
+    dbms_network_acl_admin.append_host_ace(
+        host    => '*'
+        , ace    =>  xs$ace_type(
+                                 privilege_list        => xs$name_list('connect')
+                                , principal_name    => 'APEX_260100' -- replace your APEX user here.
+                                , principal_type    => xs_acl.ptype_db
+                         )
+                    );
+END;
